@@ -1,0 +1,32 @@
+{
+  "name": "classy-api-client",
+  "version": "1.0.0",
+  "description": "Client for Classy API v2.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/classy-org/classy-api-client"
+  },
+  "keywords": [
+    "classy",
+    "api",
+    "client"
+  ],
+  "author": "jingram@classy.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/classy-org/classy-api-client/issues"
+  },
+  "homepage": "https://github.com/classy-org/classy-api-client#readme",
+  "dependencies": {
+    "oauth": "^0.9.15",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-google": "^0.9.1"
+  }
+}
