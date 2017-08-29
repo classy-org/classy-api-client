@@ -6,6 +6,7 @@ const ApiClient = require('../index.js')({
   clientSecret: process.argv[3]
 });
 
+// should fail - /me is user-specific
 ApiClient.request(
     'GET', '/me', null, null, (error, result) => {
   if (error) {
@@ -15,6 +16,7 @@ ApiClient.request(
   }
 });
 
+// should succeed
 ApiClient.request(
     'GET', '/me', null, {
       grant_type: 'password',
