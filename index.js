@@ -19,8 +19,8 @@ function generateApiToken(authParams, next) {
   oauth2.getOAuthAccessToken('', authParams, next);
 };
 
-function apiRequest(method, resource, payload, authParams, callback) {
-  generateApiToken(authParams, function(error, bearer) {
+function apiRequest(method, resource, payload, callback) {
+  generateApiToken(null, function(error, bearer) {
     if (error) {
       callback(error);
       return;
