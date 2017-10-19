@@ -1,12 +1,21 @@
 'use strict';
 
-const request = require('request');
+const httpRequest = require('request');
 const OAuth2 = require('oauth').OAuth2;
 let clientId;
 let clientSecret;
 let oauthUrl;
 let apiUrl;
 let timeout;
+
+function parse(body) {
+  try {
+    return JSON.parse(body);
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
 
 function generateApiToken(authParams, next) {
   let oauth2 = new OAuth2(clientId, clientSecret, oauthUrl,
@@ -19,8 +28,8 @@ function generateApiToken(authParams, next) {
   oauth2.getOAuthAccessToken('', authParams, next);
 };
 
-function apiRequest(method, resource, payload, callback) {
-  generateApiToken(null, function(error, bearer) {
+function apiRequest(method, resource, payload, authParams, callback) {
+  generateApiToken(authParams, function(error, bearer) {
     if (error) {
       callback(error);
       return;
@@ -38,14 +47,29 @@ function apiRequest(method, resource, payload, callback) {
       options.headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(payload);
     }
-    request(options, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        callback(null, body ? JSON.parse(body) : {});
-      } else {
-        callback(error || `Response was not 200 OK:
-          ${JSON.stringify(response, null, 2)}`);
-      }
+    httpRequest(options, function(error, response, body) {
+      callback(error, {
+        status: response.statusCode,
+        error,
+        response,
+        body,
+        object: parse(body)
+      });
     });
+  });
+}
+
+function request(method, resource, payload, authParams, callback) {
+  apiRequest(method, resource, payload, authParams, function(error, result) {
+    if (result.status !== 200) {
+      callback(error ||
+        {
+          status: result.status,
+          message: `${JSON.stringify(result.response)}`
+        });
+    } else {
+      callback(null, result.body ? JSON.parse(result.body) : {});
+    }
   });
 }
 
@@ -61,6 +85,6 @@ module.exports = (config) => {
   apiUrl = config.apiUrl;
   timeout = config.timeout;
   return {
-    request: apiRequest
+    request: request
   };
 };
