@@ -1,6 +1,6 @@
 'use strict';
 
-const httpRequest = require('request');
+const request = require('request');
 const OAuth2 = require('oauth').OAuth2;
 let clientId;
 let clientSecret;
@@ -47,29 +47,17 @@ function apiRequest(method, resource, payload, authParams, callback) {
       options.headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(payload);
     }
-    httpRequest(options, function(error, response, body) {
-      callback(error, {
-        status: response.statusCode,
-        error,
-        response,
-        body,
-        object: parse(body)
-      });
+    request(options, function(error, response, body) {
+      if (response.statusCode !== 200) {
+        callback(error ||
+          {
+            status: response.statusCode,
+            message: `${JSON.stringify(response)}`
+          });
+      } else {
+        callback(null, body ? JSON.parse(body) : {});
+      }
     });
-  });
-}
-
-function request(method, resource, payload, authParams, callback) {
-  apiRequest(method, resource, payload, authParams, function(error, result) {
-    if (result.status !== 200) {
-      callback(error ||
-        {
-          status: result.status,
-          message: `${JSON.stringify(result.response)}`
-        });
-    } else {
-      callback(null, result.body ? JSON.parse(result.body) : {});
-    }
   });
 }
 
@@ -85,6 +73,6 @@ module.exports = (config) => {
   apiUrl = config.apiUrl;
   timeout = config.timeout;
   return {
-    request: request
+    request: apiRequest
   };
 };
