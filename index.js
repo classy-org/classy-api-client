@@ -48,7 +48,7 @@ function apiRequest(method, resource, payload, authParams, callback) {
       options.body = JSON.stringify(payload);
     }
     request(options, function(error, response, body) {
-      if (response.statusCode !== 200) {
+      if (error || response.statusCode !== 200) {
         callback(error ||
           {
             status: response.statusCode,
