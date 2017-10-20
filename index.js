@@ -8,6 +8,15 @@ let oauthUrl;
 let apiUrl;
 let timeout;
 
+function parse(body) {
+  try {
+    return JSON.parse(body);
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
 function generateApiToken(authParams, next) {
   let oauth2 = new OAuth2(clientId, clientSecret, oauthUrl,
     null, '/oauth2/auth', null);
@@ -19,8 +28,8 @@ function generateApiToken(authParams, next) {
   oauth2.getOAuthAccessToken('', authParams, next);
 };
 
-function apiRequest(method, resource, payload, callback) {
-  generateApiToken(null, function(error, bearer) {
+function apiRequest(method, resource, payload, authParams, callback) {
+  generateApiToken(authParams, function(error, bearer) {
     if (error) {
       callback(error);
       return;
@@ -39,11 +48,18 @@ function apiRequest(method, resource, payload, callback) {
       options.body = JSON.stringify(payload);
     }
     request(options, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        callback(null, body ? JSON.parse(body) : {});
+      if (error || response.statusCode !== 200) {
+        callback(error ||
+          {
+            status: response.statusCode,
+            error,
+            response,
+            body,
+            object: parse(body)
+          }
+        );
       } else {
-        callback(error || `Response was not 200 OK:
-          ${JSON.stringify(response, null, 2)}`);
+        callback(null, body ? JSON.parse(body) : {});
       }
     });
   });
