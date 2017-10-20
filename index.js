@@ -52,7 +52,7 @@ function apiRequest(method, resource, payload, authParams, callback) {
         callback(error ||
           {
             status: response.statusCode,
-            message: `${JSON.stringify(response)}`
+            message: `${JSON.stringify(response, null, 2)}`
           });
       } else {
         callback(null, body ? JSON.parse(body) : {});
