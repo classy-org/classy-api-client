@@ -1,6 +1,6 @@
 {
   "name": "classy-api-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Client for Classy API v2.",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/classy-org/classy-api-client#readme",
   "dependencies": {
     "oauth": "^0.9.15",
-    "request": "^2.81.0"
+    "request": "^2.83.0"
   },
   "devDependencies": {
     "eslint": "^4.5.0",
