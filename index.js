@@ -7,10 +7,11 @@ let clientSecret;
 let oauthUrl;
 let apiUrl;
 let timeout;
+let jsonParse = JSON.parse;
 
 function parse(body) {
   try {
-    return JSON.parse(body);
+    return jsonParse(body);
   } catch (e) {
     console.error(e);
     return {};
@@ -59,7 +60,7 @@ function apiRequest(method, resource, payload, authParams, callback) {
           }
         );
       } else {
-        callback(null, body ? JSON.parse(body) : {});
+        callback(null, body ? jsonParse(body) : {});
       }
     });
   });
@@ -76,6 +77,9 @@ module.exports = (config) => {
   oauthUrl = config.oauthUrl;
   apiUrl = config.apiUrl;
   timeout = config.timeout;
+  if (config.bigIntsToStrings) {
+    jsonParse = require('json-bigint')({'storeAsString': true}).parse;
+  }
   return {
     request: apiRequest
   };

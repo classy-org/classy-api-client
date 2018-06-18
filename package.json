@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/classy-org/classy-api-client#readme",
   "dependencies": {
+    "json-bigint": "^0.3.0",
     "oauth": "^0.9.15",
     "request": "^2.83.0"
   },
